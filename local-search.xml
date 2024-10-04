@@ -4,13 +4,19 @@
   
   
   <entry>
-    <title>(ink)14号小屋</title>
+    <title>14号小屋</title>
     <link href="/2024/10/04/hut14/"/>
     <url>/2024/10/04/hut14/</url>
     
     <content type="html"><![CDATA[<p><em>ink是一种脚本语言，其核心思想是用流标记纯文本，以生成交互式脚本。它一般被用于制作互动小说。</em></p><p>《14号小屋》是inky编辑器自带的一个demo，是一个互动小说，挺有意思的。原文的语言是英文，我后面可能会把它汉化成中文。<br>我把它导出做成了一个网页，下面是链接。</p><blockquote><p><a href="https://ycqaq233.github.io/demo/hut14/index.html">https://ycqaq233.github.io/demo/hut14/index.html</a></p></blockquote>]]></content>
     
     
+    
+    <tags>
+      
+      <tag>ink</tag>
+      
+    </tags>
     
   </entry>
   
@@ -24,6 +30,12 @@
     <content type="html"><![CDATA[<p>费了半天劲终于把这个博客给创建好了,以后就在这里安家了。<br>这个博客现在看起来很简陋，也许我以后会给它增加一些功能，让这个网站更完善。<br>目前这个网站采用的是hexo架构，界面主题用的是fluid.<br>我以后也许会在这个网站上写写一些学习笔记之类的，看到有意思的东西我也会放上来。</p>]]></content>
     
     
+    
+    <tags>
+      
+      <tag>杂谈</tag>
+      
+    </tags>
     
   </entry>
   
