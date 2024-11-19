@@ -19,12 +19,12 @@
   <meta name="author" content="野草">
   <meta name="keywords" content="野草">
   
-    <meta name="description" content="用dirsearch扫一下，发现index。php.bak文件,打开看是php代码 1234567891011121314151617&lt;?phpinclude_once &quot;flag.php&quot;;if(isset($_GET[&#x27;key&#x27;])) &#123;    $key &#x3D; $_GET[&#x27;key&#x27;];    if(!is_numeri">
+    <meta name="description" content="用dirsearch扫一下，发现index。php.bak文件,打开看是php代码 1234567891011121314151617&lt;?phpinclude_once &quot;flag.php&quot;;if(isset($_GET[&#x27;key&#x27;])) &#123;    $key &#x3D; $_GET[&#x27;key&#x27;];    if(!is_numer">
 <meta property="og:type" content="website">
 <meta property="og:title" content="BackUpFile">
 <meta property="og:url" content="https://ycqaq233.github.io/WriteUp/Web/BackUpFile.html">
 <meta property="og:site_name" content="野草">
-<meta property="og:description" content="用dirsearch扫一下，发现index。php.bak文件,打开看是php代码 1234567891011121314151617&lt;?phpinclude_once &quot;flag.php&quot;;if(isset($_GET[&#x27;key&#x27;])) &#123;    $key &#x3D; $_GET[&#x27;key&#x27;];    if(!is_numeri">
+<meta property="og:description" content="用dirsearch扫一下，发现index。php.bak文件,打开看是php代码 1234567891011121314151617&lt;?phpinclude_once &quot;flag.php&quot;;if(isset($_GET[&#x27;key&#x27;])) &#123;    $key &#x3D; $_GET[&#x27;key&#x27;];    if(!is_numer">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-11-19T12:34:39.000Z">
 <meta property="article:modified_time" content="2024-11-19T12:34:39.551Z">
@@ -222,9 +222,9 @@
                 
 
 <article class="page-content">
-  <p>用dirsearch扫一下，发现index。php.bak文件,打开看是php代码</p>
+  <p>用dirsearch扫一下，发现index。php.bak文件,打开看是php代码
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-keyword">include_once</span> <span class="hljs-string">&quot;flag.php&quot;</span>;<br><br><span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;key&#x27;</span>])) &#123;<br>    <span class="hljs-variable">$key</span> = <span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;key&#x27;</span>];<br>    <span class="hljs-keyword">if</span>(!<span class="hljs-title function_ invoke__">is_numeric</span>(<span class="hljs-variable">$key</span>)) &#123;<br>        <span class="hljs-keyword">exit</span>(<span class="hljs-string">&quot;Just num!&quot;</span>);<br>    &#125;<br>    <span class="hljs-variable">$key</span> = <span class="hljs-title function_ invoke__">intval</span>(<span class="hljs-variable">$key</span>);<br>    <span class="hljs-variable">$str</span> = <span class="hljs-string">&quot;123ffwsfwefwf24r2f32ir23jrw923rskfjwtsw54w3&quot;</span>;<br>    <span class="hljs-keyword">if</span>(<span class="hljs-variable">$key</span> == <span class="hljs-variable">$str</span>) &#123;<br>        <span class="hljs-keyword">echo</span> <span class="hljs-variable">$flag</span>;<br>    &#125;<br>&#125;<br><span class="hljs-keyword">else</span> &#123;<br>    <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;Try to find out source file!&quot;</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
-<p>弱类型比较，整型和字符串比较是会把字符串前面的数字截下来，所以构造payload:?key=123</p>
+弱类型比较，整型和字符串比较是会把字符串前面的数字截下来，所以构造payload:?key=123</p>
 
 
   

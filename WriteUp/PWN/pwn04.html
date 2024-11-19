@@ -19,12 +19,12 @@
   <meta name="author" content="野草">
   <meta name="keywords" content="野草">
   
-    <meta name="description" content="pwn 栈溢出  先查壳 栈不可执行，因为开启了canary。  canary: 用于防止栈溢出被利用的一种方法，原理是在栈的ebp下面放一个随机数，在函数返回之前会检查这个数有没有被修改，就可以检测是否发生栈溢出了。  IDA逆向一下。 main函数  vuln函数  v2就是我们输入的值。">
+    <meta name="description" content="pwn 栈溢出  先查壳  栈不可执行，因为开启了canary。 &gt;canary: 用于防止栈溢出被利用的一种方法，原理是在栈的ebp下面放一个随机数，在函数返回之前会检查这个数有没有被修改，就可以检测是否发生栈溢出了。 IDA逆向一下。 main函数  vuln函数  v2就是我们输入的值。">
 <meta property="og:type" content="website">
 <meta property="og:title" content="pwn04">
 <meta property="og:url" content="https://ycqaq233.github.io/WriteUp/PWN/pwn04.html">
 <meta property="og:site_name" content="野草">
-<meta property="og:description" content="pwn 栈溢出  先查壳 栈不可执行，因为开启了canary。  canary: 用于防止栈溢出被利用的一种方法，原理是在栈的ebp下面放一个随机数，在函数返回之前会检查这个数有没有被修改，就可以检测是否发生栈溢出了。  IDA逆向一下。 main函数  vuln函数  v2就是我们输入的值。">
+<meta property="og:description" content="pwn 栈溢出  先查壳  栈不可执行，因为开启了canary。 &gt;canary: 用于防止栈溢出被利用的一种方法，原理是在栈的ebp下面放一个随机数，在函数返回之前会检查这个数有没有被修改，就可以检测是否发生栈溢出了。 IDA逆向一下。 main函数  vuln函数  v2就是我们输入的值。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://ycqaq233.github.io/WriteUp/PWN/img/pwn041.png">
 <meta property="og:image" content="https://ycqaq233.github.io/WriteUp/PWN/img/pwn04main.png">
@@ -229,18 +229,10 @@
   <blockquote>
 <p>pwn 栈溢出</p>
 </blockquote>
-<p>先查壳<img src="img/pwn041.png" srcset="/img/loading.gif" lazyload alt><br>
-栈不可执行，因为开启了canary。</p>
-<blockquote>
-<p>canary:<br>
+<p>先查壳 <img src="img/pwn041.png" srcset="/img/loading.gif" lazyload> 栈不可执行，因为开启了canary。
+&gt;canary:
 用于防止栈溢出被利用的一种方法，原理是在栈的ebp下面放一个随机数，在函数返回之前会检查这个数有没有被修改，就可以检测是否发生栈溢出了。</p>
-</blockquote>
-<p>IDA逆向一下。<br>
-main函数<br>
-<img src="img/pwn04main.png" srcset="/img/loading.gif" lazyload alt><br>
-vuln函数<br>
-<img src="img/pwn04vuln.png" srcset="/img/loading.gif" lazyload alt><br>
-v2就是我们输入的值。</p>
+<p>IDA逆向一下。 main函数 <img src="img/pwn04main.png" srcset="/img/loading.gif" lazyload> vuln函数 <img src="img/pwn04vuln.png" srcset="/img/loading.gif" lazyload> v2就是我们输入的值。</p>
 
 
   

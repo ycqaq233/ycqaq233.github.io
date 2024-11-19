@@ -19,12 +19,12 @@
   <meta name="author" content="野草">
   <meta name="keywords" content="野草">
   
-    <meta name="description" content="打开文件，查2进制数据，发现隐藏文件，分离文件，解压压缩包得到一个加密压缩包，查压缩包属性得到base64编码字符，解码得到压缩包密码，解压得到thienc.txt。本来以为打开就是flag，结果是一串数字。用以下代码转换为二进制文件，发现是zip文件。要运行半个多小时。 123456789101112131415161718192021222324252627282930import refro">
+    <meta name="description" content="打开文件，查2进制数据，发现隐藏文件，分离文件，解压压缩包得到一个加密压缩包，查压缩包属性得到base64编码字符，解码得到压缩包密码，解压得到thienc.txt。 本来以为打开就是flag，结果是一串数字。用以下代码转换为二进制文件，发现是zip文件。要运行半个多小时。 123456789101112131415161718192021222324252627282930import re">
 <meta property="og:type" content="website">
 <meta property="og:title" content="misc50">
 <meta property="og:url" content="https://ycqaq233.github.io/WriteUp/MISC/misc50.html">
 <meta property="og:site_name" content="野草">
-<meta property="og:description" content="打开文件，查2进制数据，发现隐藏文件，分离文件，解压压缩包得到一个加密压缩包，查压缩包属性得到base64编码字符，解码得到压缩包密码，解压得到thienc.txt。本来以为打开就是flag，结果是一串数字。用以下代码转换为二进制文件，发现是zip文件。要运行半个多小时。 123456789101112131415161718192021222324252627282930import refro">
+<meta property="og:description" content="打开文件，查2进制数据，发现隐藏文件，分离文件，解压压缩包得到一个加密压缩包，查压缩包属性得到base64编码字符，解码得到压缩包密码，解压得到thienc.txt。 本来以为打开就是flag，结果是一串数字。用以下代码转换为二进制文件，发现是zip文件。要运行半个多小时。 123456789101112131415161718192021222324252627282930import re">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-11-19T12:34:39.000Z">
 <meta property="article:modified_time" content="2024-11-19T12:34:39.521Z">
@@ -222,9 +222,10 @@
                 
 
 <article class="page-content">
-  <p>打开文件，查2进制数据，发现隐藏文件，分离文件，解压压缩包得到一个加密压缩包，查压缩包属性得到base64编码字符，解码得到压缩包密码，解压得到thienc.txt。本来以为打开就是flag，结果是一串数字。用以下代码转换为二进制文件，发现是zip文件。要运行半个多小时。</p>
+  <p>打开文件，查2进制数据，发现隐藏文件，分离文件，解压压缩包得到一个加密压缩包，查压缩包属性得到base64编码字符，解码得到压缩包密码，解压得到thienc.txt。
+本来以为打开就是flag，结果是一串数字。用以下代码转换为二进制文件，发现是zip文件。要运行半个多小时。
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> re<br><span class="hljs-keyword">from</span> tqdm <span class="hljs-keyword">import</span> trange<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">read_file</span>(<span class="hljs-params">filepath</span>):<br>    <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(filepath) <span class="hljs-keyword">as</span> fp:<br>        content=fp.read();<br>    <span class="hljs-keyword">return</span> content<br><br>number = read_file(<span class="hljs-string">&#x27;thienc.txt&#x27;</span>)<br>result = []<br>result.append(re.findall(<span class="hljs-string">r&#x27;.&#123;2&#125;&#x27;</span>, number))<br>result = result[<span class="hljs-number">0</span>]<br><br>strings =<span class="hljs-string">&#x27;&#x27;</span><br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> trange(<span class="hljs-built_in">len</span>(result)):<br>    y = <span class="hljs-built_in">bytearray</span>.fromhex(result[i])<br>    z = <span class="hljs-built_in">str</span>(y)<br>    z= re.findall(<span class="hljs-string">&quot;b&#x27;(.*?)&#x27;&quot;</span>,z)[<span class="hljs-number">0</span>]<br>    strings += z<br><br>b= strings.split(<span class="hljs-string">&#x27;0x&#x27;</span>)<br><br>strings=<span class="hljs-string">&#x27;&#x27;</span><br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> b:<br>    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(i) ==<span class="hljs-number">1</span>:<br>        i= <span class="hljs-string">&#x27;0&#x27;</span> + i<br>    strings +=i<br><br><span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;te.txt&#x27;</span>, <span class="hljs-string">&#x27;w&#x27;</span>) <span class="hljs-keyword">as</span> f:<br>    f.write(strings)<br></code></pre></td></tr></table></figure>
-<p>解压文件，发现要密码，密码在图片的文件尾里用base32解密。</p>
+解压文件，发现要密码，密码在图片的文件尾里用base32解密。</p>
 
 
   

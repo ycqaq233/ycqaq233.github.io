@@ -19,12 +19,12 @@
   <meta name="author" content="野草">
   <meta name="keywords" content="野草">
   
-    <meta name="description" content="打开kali，使用binwalk查看二进制文件，发现图片还藏了一个zip文件，使用foremost分离。发现zip文件解压需要密码。010查看图片没有线索，考虑zip伪加密。 将001400后的值改为00.解压成功，得到一个flag.vmdk文件。 vmdk文件可以解压，打开kali,输入7z x flag.vmdk解压成功。用tree扫描目录，发现where_is_flag_part_two.">
+    <meta name="description" content="打开kali，使用binwalk查看二进制文件，发现图片还藏了一个zip文件，使用foremost分离。发现zip文件解压需要密码。010查看图片没有线索，考虑zip伪加密。  将001400后的值改为00.解压成功，得到一个flag.vmdk文件。 vmdk文件可以解压，打开kali,输入7z x flag.vmdk解压成功。 用tree扫描目录，发现where_is_flag_pa">
 <meta property="og:type" content="website">
 <meta property="og:title" content="面具下的flag">
 <meta property="og:url" content="https://ycqaq233.github.io/WriteUp/MISC/%E9%9D%A2%E5%85%B7%E4%B8%8B%E7%9A%84flag.html">
 <meta property="og:site_name" content="野草">
-<meta property="og:description" content="打开kali，使用binwalk查看二进制文件，发现图片还藏了一个zip文件，使用foremost分离。发现zip文件解压需要密码。010查看图片没有线索，考虑zip伪加密。 将001400后的值改为00.解压成功，得到一个flag.vmdk文件。 vmdk文件可以解压，打开kali,输入7z x flag.vmdk解压成功。用tree扫描目录，发现where_is_flag_part_two.">
+<meta property="og:description" content="打开kali，使用binwalk查看二进制文件，发现图片还藏了一个zip文件，使用foremost分离。发现zip文件解压需要密码。010查看图片没有线索，考虑zip伪加密。  将001400后的值改为00.解压成功，得到一个flag.vmdk文件。 vmdk文件可以解压，打开kali,输入7z x flag.vmdk解压成功。 用tree扫描目录，发现where_is_flag_pa">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://ycqaq233.github.io/WriteUp/MISC/img/mianjv.png">
 <meta property="og:image" content="https://ycqaq233.github.io/WriteUp/MISC/img/mianjv2.png">
@@ -226,13 +226,15 @@
                 
 
 <article class="page-content">
-  <p><img src="img/mianjv.png" srcset="/img/loading.gif" lazyload alt="alt text"><br>
-打开kali，使用binwalk查看二进制文件，发现图片还藏了一个zip文件，使用foremost分离。发现zip文件解压需要密码。010查看图片没有线索，考虑zip伪加密。<img src="img/mianjv2.png" srcset="/img/loading.gif" lazyload alt="alt text"><br>
-将001400后的值改为00.解压成功，得到一个flag.vmdk文件。<br>
-vmdk文件可以解压，打开kali,输入<code>7z x flag.vmdk</code>解压成功。用tree扫描目录，发现where_is_flag_part_two.txt:flag_part_two_is_here.txt文件中有一段ook密码，解密获得后半段flag<code>_i5_funny!&#125;</code><br>
-<img src="img/mianjv3.png" srcset="/img/loading.gif" lazyload alt="alt text"><br>
-前半段在key_part_one中，打开NUL发现一段brainfuck编码，解码得<code>flag&#123;N7F5_AD5</code>拼凑flag并提交。<br>
-flag:<code>flag&#123;N7F5_AD5_i5_funny!&#125;</code></p>
+  <p><img src="img/mianjv.png" srcset="/img/loading.gif" lazyload alt="alt text">
+打开kali，使用binwalk查看二进制文件，发现图片还藏了一个zip文件，使用foremost分离。发现zip文件解压需要密码。010查看图片没有线索，考虑zip伪加密。
+<img src="img/mianjv2.png" srcset="/img/loading.gif" lazyload alt="alt text">
+将001400后的值改为00.解压成功，得到一个flag.vmdk文件。
+vmdk文件可以解压，打开kali,输入<code>7z x flag.vmdk</code>解压成功。
+用tree扫描目录，发现where_is_flag_part_two.txt:flag_part_two_is_here.txt文件中有一段ook密码，解密获得后半段flag<code>_i5_funny!&#125;</code>
+<img src="img/mianjv3.png" srcset="/img/loading.gif" lazyload alt="alt text">
+前半段在key_part_one中，打开NUL发现一段brainfuck编码，解码得<code>flag&#123;N7F5_AD5</code>
+拼凑flag并提交。 flag:<code>flag&#123;N7F5_AD5_i5_funny!&#125;</code></p>
 
 
   

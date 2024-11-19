@@ -19,12 +19,12 @@
   <meta name="author" content="野草">
   <meta name="keywords" content="野草">
   
-    <meta name="description" content="下载文件。发现压缩包加密，用winrar打开,发现图片中flag.txt和hint.txt都是加密的，但是misc1.zip没有加密(第一次听说加密只加密一半的) 打开发现一张2020图片，010打开在底部发现flag————当然是假的。 后来才发现，这个2020是旁边的doc文档的密码.打开发现一堆音符。 解密一下，发现一串很像base64的编码，这个不是base64，因为有个&#x2F;，这个是rabb">
+    <meta name="description" content="下载文件。发现压缩包加密，用winrar打开,发现图片中flag.txt和hint.txt都是加密的，但是misc1.zip没有加密(第一次听说加密只加密一半的) 打开发现一张2020图片，010打开在底部发现flag————当然是假的。  后来才发现，这个2020是旁边的doc文档的密码.打开发现一堆音符。  解密一下，发现一串很像base64的编码，这个不是base64，因为有个&#x2F;，这个">
 <meta property="og:type" content="website">
 <meta property="og:title" content="miscx">
 <meta property="og:url" content="https://ycqaq233.github.io/WriteUp/MISC/miscx.html">
 <meta property="og:site_name" content="野草">
-<meta property="og:description" content="下载文件。发现压缩包加密，用winrar打开,发现图片中flag.txt和hint.txt都是加密的，但是misc1.zip没有加密(第一次听说加密只加密一半的) 打开发现一张2020图片，010打开在底部发现flag————当然是假的。 后来才发现，这个2020是旁边的doc文档的密码.打开发现一堆音符。 解密一下，发现一串很像base64的编码，这个不是base64，因为有个&#x2F;，这个是rabb">
+<meta property="og:description" content="下载文件。发现压缩包加密，用winrar打开,发现图片中flag.txt和hint.txt都是加密的，但是misc1.zip没有加密(第一次听说加密只加密一半的) 打开发现一张2020图片，010打开在底部发现flag————当然是假的。  后来才发现，这个2020是旁边的doc文档的密码.打开发现一堆音符。  解密一下，发现一串很像base64的编码，这个不是base64，因为有个&#x2F;，这个">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://ycqaq233.github.io/WriteUp/MISC/img/miscx.png">
 <meta property="og:image" content="https://ycqaq233.github.io/WriteUp/MISC/img/miscx7.png">
@@ -229,14 +229,15 @@
                 
 
 <article class="page-content">
-  <p>下载文件。发现压缩包加密，用winrar打开,发现图片中flag.txt和hint.txt都是加密的，但是misc1.zip没有加密(第一次听说加密只加密一半的)<img src="img/miscx.png" srcset="/img/loading.gif" lazyload alt><br>
-打开发现一张2020图片，010打开在底部发现flag————当然是假的。<img src="img/miscx7.png" srcset="/img/loading.gif" lazyload alt><br>
-后来才发现，这个2020是旁边的doc文档的密码.打开发现一堆音符。<img src="img/miscx2.png" srcset="/img/loading.gif" lazyload alt><br>
-解密一下，发现一串很像base64的编码，这个不是base64，因为有个/，这个是rabbit编码。<br>
-<img src="img/miscx3.png" srcset="/img/loading.gif" lazyload alt><br>
-rabbit解码解不出来，因为密钥非空，后来才发现密钥还是2020。解码获得一串字符<img src="img/miscx4.png" srcset="/img/loading.gif" lazyload alt><br>
-大喜，用这串字符当作密码解压压缩包，结果发现这个只是hint.txt的密码…打开文件，这次真的是base64了。然而解密后还是一串乱码…这里要解密后将末尾的%30D进行url转码，然后再解压，再转码，一直重复，就能获得flag.txt的密码了。<br>
-<img src="img/miscx5.png" srcset="/img/loading.gif" lazyload alt></p>
+  <p>下载文件。发现压缩包加密，用winrar打开,发现图片中flag.txt和hint.txt都是加密的，但是misc1.zip没有加密(第一次听说加密只加密一半的)<img src="img/miscx.png" srcset="/img/loading.gif" lazyload>
+打开发现一张2020图片，010打开在底部发现flag————当然是假的。 <img src="img/miscx7.png" srcset="/img/loading.gif" lazyload>
+后来才发现，这个2020是旁边的doc文档的密码.打开发现一堆音符。 <img src="img/miscx2.png" srcset="/img/loading.gif" lazyload>
+解密一下，发现一串很像base64的编码，这个不是base64，因为有个/，这个是rabbit编码。
+<img src="img/miscx3.png" srcset="/img/loading.gif" lazyload>
+rabbit解码解不出来，因为密钥非空，后来才发现密钥还是2020。解码获得一串字符
+<img src="img/miscx4.png" srcset="/img/loading.gif" lazyload>
+大喜，用这串字符当作密码解压压缩包，结果发现这个只是hint.txt的密码...打开文件，这次真的是base64了。然而解密后还是一串乱码...这里要解密后将末尾的%30D进行url转码，然后再解压，再转码，一直重复，就能获得flag.txt的密码了。
+<img src="img/miscx5.png" srcset="/img/loading.gif" lazyload></p>
 
 
   

